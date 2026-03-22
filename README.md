@@ -2,7 +2,7 @@
 Ubuntu24.04の公開用リポジトリ
 
 **作成日**  : 2026/03/23
-**ﾊﾞｰｼﾞｮﾝ** : v0.1
+**ﾊﾞｰｼﾞｮﾝ** : v0.2
 
 ---
 
@@ -23,13 +23,24 @@ git config --global user.email "your.email@example.com"
 
 ## Remote DeskTop
 
-[Ubuntu 24.04 LTSで新しい標準RDP接続を試してみる](https://blog.treedown.net/entry/2024/09/17/010000)
+[Ubuntu 24.04 LTSで新しい標準RDP接続を試してみる](https://blog.treedown.net/entry/2024/09/17/010000)  
+以下の設定で、WindowsからRemote Desktopでログインできるように設定
 
-- 設定画面 > システム > 画面上の「Remote Desktop」> Desktop Sharing、Remote Controlの二つを有効化  
+- 設定画面 > システム > 画面上の「Remote Desktop」> Desktop Sharing、Remote Controlの二つを有効化
+  - ![alt text](./assets/img/Ubuntu_Remote01.jpg)
 
 - ユーザ名とパスワードを確認。パスワードはRDP接続用のパスワードを別途設定
+  - ![alt text](./assets/img/Ubuntu_Remote02.jpg)
 
+## openssh-server
 
+サーバーでの事前準備
+[SSH接続のための設定まとめ](https://qiita.com/010Ri/items/0a09356633655b5613ee)  
+以下のコマンドで、sshサーバーをインストール
+
+```bash
+sudo apt install openssh-server
+```
 
 ---
 
