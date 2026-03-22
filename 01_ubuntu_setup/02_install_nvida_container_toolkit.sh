@@ -2,19 +2,29 @@
 # update 2026.03.23 22:00JST
 
 
+# Reference
+# https://qiita.com/ryome/items/29b3241d32cf63849f63
+
 # ----------------------------------
 # echo "Install docker
 # ----------------------------------
 echo "Install docker"
 
-# Dockerをインストール
+# package update
 sudo apt update
-sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common -y
+
+# Install Docker Engine
+sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+
+# Get Docker's official GPG key and add the Docker repository to APT sources:
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo apt-key fingerprint 0EBFCD8
+
+# Add the Docker repository to APT sources:
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+
+# Update the package database with Docker packages from the newly added repo:
 sudo apt update
-sudo apt install docker-ce docker-ce-cli containerd.io -y
+sudo apt install -y docker-ce docker-ce-cli containerd.io
 
 # 確認(Docker)
 sudo docker run hello-world
