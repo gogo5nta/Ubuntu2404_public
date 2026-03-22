@@ -22,6 +22,13 @@ echo "install openssh-server"
 sudo apt install -y openssh-server
 
 # -------------------
+# echo "install terminator"
+# ---------------
+echo "install terminator"
+
+sudo apt install -y terminator
+
+# -------------------
 # echo "install Chrome"
 # ---------------
 echo "install Chrome"
