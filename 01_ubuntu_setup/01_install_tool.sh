@@ -1,4 +1,18 @@
 #!/bin/bash
+# update 2026.03.23 22:00JST
+
+# ----------------------------------
+# Check OS ver and Kernel ver
+# ----------------------------------
+echo "# Check OS ver and Kernel ver"
+cat /etc/os-release
+uname -r
+
+# ----------------------------------
+# rename English holder
+# ----------------------------------
+echo "# rename English holder"
+LANG=C xdg-user-dirs-gtk-update
 
 # -------------------
 # echo "install openssh-server"
