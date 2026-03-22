@@ -19,6 +19,20 @@ git config --global user.email "your.email@example.com"
 
 ---
 
+# ubuntu 24.04 基本設定
+
+## Remote DeskTop
+
+[Ubuntu 24.04 LTSで新しい標準RDP接続を試してみる](https://blog.treedown.net/entry/2024/09/17/010000)
+
+- 設定画面 > システム > 画面上の「Remote Desktop」> Desktop Sharing、Remote Controlの二つを有効化  
+
+- ユーザ名とパスワードを確認。パスワードはRDP接続用のパスワードを別途設定
+
+
+
+---
+
 # Github Copilot設定
 
 ## Visual Studio Code から GitHub Copilot を利用
