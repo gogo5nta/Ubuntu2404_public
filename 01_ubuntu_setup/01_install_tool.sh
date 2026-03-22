@@ -5,8 +5,8 @@
 # Check OS ver and Kernel ver
 # ----------------------------------
 echo "# Check OS ver and Kernel ver"
-cat /etc/os-release
-uname -r
+cat /etc/os-release > ../info/os-release.txt
+uname -r > ../info/kernel-version.txt
 
 # ----------------------------------
 # rename English holder
