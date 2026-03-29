@@ -9,7 +9,7 @@ ollama関係のメモ
 
 # 1. openwebui docker設定
 
-## 1.1 docker実行
+## 1.1 docker実行(open-webui本体)
 
 [参考1: ローカル環境で動かすOpen WebUIのインストールと使用方法](https://note.com/tamo2918/n/n94b8561fb70c)
 [参考2: OpenWebUI Quick Start](https://docs.openwebui.com/getting-started/quick-start/)
@@ -39,19 +39,19 @@ Swagger UI API ドキュメントを見る場合、以下を参考に
 # Swagger UI API  起動時に-e ENV=dev必要
 http://localhost:11434/docs
 ```
+
 <BR>
 
 ```bash
 # docker 基本起動 home環境にバインド_debug
 docker run -d \
   -v /home/$USER/open-webui:/app/backend/data \
-  -v /home/$USER/pipelines:/app/pipelines \
   -p 3000:8080 \
   -e ENV=dev \
   -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
   --name open-webui \
+  --restart always \
   ghcr.io/open-webui/open-webui:main
-
 ```
 
 start_openwebui.shの例(chmod +xで実行権限を与えておく)
@@ -62,11 +62,11 @@ start_openwebui.shの例(chmod +xで実行権限を与えておく)
 # docker 基本起動 home環境にバインド_debug
 docker run -d \
   -v /home/$USER/open-webui:/app/backend/data \
- -v /home/$USER/pipelines:/app/pipelines \
   -p 3000:8080 \
   -e ENV=dev \
   -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
   --name open-webui \
+  --restart always \
   ghcr.io/open-webui/open-webui:main
 ```
 
@@ -74,14 +74,17 @@ docker run -d \
 
 OpenWebUIのpiplines有効は、以下を参照
 - [LangfuseとOpenWebUIを統合する方法](https://langfuse.com/integrations/no-code/openwebui)
+- [パイプライン：UIに依存しないOpenAI APIプラグインフレームワーク](https://docs.openwebui.com/features/extensibility/pipelines/)
 
 ```bash
 # docker 基本起動 home環境にバインド_debug_piplines
 docker run -d \
   -v /home/$USER/pipelines:/app/pipelines \
   -p 9099:9099 \
+   --add-host=host.docker.internal:host-gateway  \
   -e PIPELINES_API_KEY=0p3n-w3bu! \
-  --name pipelines \
+  --name open-webui-pipelines \
+  --restart always \
   ghcr.io/open-webui/pipelines:main
 ```
 
@@ -93,11 +96,25 @@ start_piplines.shの例(chmod +xで実行権限を与えておく)
 # docker 基本起動 home環境にバインド_debug_piplines
 docker run -d \
   -v /home/$USER/pipelines:/app/pipelines \
-  -p 9199:9099 \
-  -e ENV=dev \
-  --name pipelines \
+  -p 9099:9099 \
+   --add-host=host.docker.internal:host-gateway  \
+  -e PIPELINES_API_KEY=0p3n-w3bu! \
+  --name open-webui-pipelines \
+  --restart always \
   ghcr.io/open-webui/pipelines:main
 ```
+
+# 1.3 piplinesをOpenWebUIに登録
+
+OpenWebUIに管理者でログイン > 管理者パネル > 設定 > 接続  
+OpenAI API接続の管理の「＋」を押して
+| 内容 | 値 | 備考 |
+| --- | --- | --- |
+| URL | http://192.168.1.61:9099 | ※localhostではNG。IP固定 |
+| API-KEY | 0p3n-w3bu! | |
+| API-Type | Respnones | |
+
+  - ![alt text](../assets/img/open-webui_add_connect_for_piplines1.jpg)
 
 ---
 
@@ -119,4 +136,4 @@ Step2: タイトル生成プロンプトに以下を入れる
 AI: {{response}}
 ```
 
-- ![alt text](../assets/img/openwebui_title_japanese1.jpg)
+- ![alt text](../assets/img/open-webui_title_japanese1.jpg)

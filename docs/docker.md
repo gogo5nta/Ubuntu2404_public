@@ -20,6 +20,21 @@ docker関係のメモ
 | docker ps | プロセス確認 | 例: docker ps -a |
 | docker images | イメージ確認 | |
 
+## docker ps format
+
+```bash
+docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"
+```
+
+.bashrcのalisとして追加
+
+```bash
+# add alias
+alias dp='docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}"'
+
+```
+
+
 ## 環境変数
 
 [Docker で環境変数をホストからコンテナに渡す方法](https://qiita.com/KEINOS/items/518610bc2fdf5999acf2)
