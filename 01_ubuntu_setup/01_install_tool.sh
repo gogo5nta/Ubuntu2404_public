@@ -1,5 +1,5 @@
 #!/bin/bash
-# update 2026.03.23 22:00JST
+# update 2026.03.29 10:30JST
 
 # ----------------------------------
 # Check OS ver and Kernel ver
@@ -9,28 +9,43 @@ cat /etc/os-release > ../info/os-release.txt
 uname -r > ../info/kernel-version.txt
 
 # ----------------------------------
-# rename English holder
+# for Japanese user, the folder name is in Japanese, so rename it to English
 # ----------------------------------
 echo "# rename English holder"
 LANG=C xdg-user-dirs-gtk-update
 
 # -------------------
-# echo "install openssh-server"
+# for remote connection
 # ---------------
 echo "install openssh-server"
 
 sudo apt install -y openssh-server
 
 # -------------------
-# echo "install terminator"
-# ---------------
+# for GPU monitoring bash (nvidia-smiと似たコマンド)
+# ------------------
+echo "install gpustat"
+
+sudo apt install -y gpustat
+
+# -------------------
+# for JSON processing in bash
+# ------------------
+echo "install jq"
+
+sudo apt install -y jq
+
+
+# -------------------
+# for terminal emulator
+# -------------------
 echo "install terminator"
 
 sudo apt install -y terminator
 
 # -------------------
-# echo "install Chrome"
-# ---------------
+# for Chrome browser
+# -------------------
 echo "install Chrome"
 
 # Install tools

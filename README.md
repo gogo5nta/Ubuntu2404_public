@@ -42,6 +42,29 @@ git config --global user.email "your.email@example.com"
 sudo apt install openssh-server
 ```
 
+## jq
+
+[JSONをLinuxで扱うコマンドの使い方](https://zenn.dev/en2enzo2/articles/e45e6d0aec6c7e)
+
+ファイルを見やすく表示
+```bash
+jq '.' data.json
+```
+
+色付け・整形して表示（-Cオプション）:
+```bash
+jq -C '.' data.json | less -R
+```
+
+## du
+
+[Linuxでディレクトリサイズを確認する方法](https://go.lightnode.com/ja/tech/check-directory-size-in-linux)
+ubuntu上でフォルダ容量確認する場合
+
+```bash
+du -h
+```
+
 ---
 
 # Github Copilot設定
@@ -72,6 +95,23 @@ sudo apt install openssh-server
 
 # dockerメモ
 
+## dockerコマンド
+
+| コマンド | 説明 | 備考 |
+| --- | --- | --- |
+| docker run | 実行 | イメージからコンテナ生成など |
+| docker exec | アタッチ | 実行中のコンテナにアタッチ。-itでターミナル実行 <BR> docker exec -it [コンテナ名] bash |
+| docker stop | 停止 | 例: docker stop ollama |
+| docker start | 開始 | 例: docker start ollama |
+| docker rm | コンテナ削除 | 例: docker rm ollama |
+| docker rmi | イメージ削除 | 例: docker rmi イメージ |
+| docker ps | プロセス確認 | 例: docker ps -a |
+| docker images | イメージ確認 | |
+
+### コンテナにアタッチしてbashを使用する場合
+
+docker exec -it [コンテナ名] bash
+
 ## dockerオプション
 
 [[Docker]覚えておきたいオプションまとめ](https://qiita.com/ryoishizawa/items/637d39574026bbd54dbf)
@@ -83,6 +123,7 @@ sudo apt install openssh-server
 | -t  | 標準入力     | ターミナルでの操作 |
 | -it | 継続+標準入力 | ターミナルでの操作を継続 |
 | --name | コンテナ名 | 指定しないとランダムな乱数に |
+| -d | コンテナをバックグランド実行 | --detachの省略。|
 
 ---
 
@@ -95,16 +136,145 @@ sudo apt install openssh-server
 ### 1. docker実行
 
 [参考1_Dockerを用いたOllamaの実行手順まとめ](https://qiita.com/Chi_corp_123/items/7b3e2617e901a656ede4)
+[参考2_Docker 上で GPU を使って Ollama を動かす](https://ishikawa-pro.hatenablog.com/entry/2025/01/16/192126)
 
-基本実行は以下。  .ollamaフォルダをマウント
+#### 1-1. 基本実行
+
+<details>
+  <summary>フォルダマウントの注意をクリックで展開</summary>
+
+```text
+Dockerコマンドで -v ollama:/root/.ollama と指定した場合、
+「名前付きボリューム（Named Volume）」として扱われるため、
+ホスト側のカレントディレクトリ（今いるフォルダ）にデータは現れません。 
+
+フォルダが見当たらない主な理由と、解決策を整理しました。
+1. なぜフォルダが見えないのか？
+名前付きボリュームの仕組み: ollama: のようにコロンの左側に
+絶対パス（/から始まるパス）を書かない場合、Dockerが管理する専用領域にデータが保存されます。
+
+保存場所: 通常、Linux環境では /var/lib/docker/volumes/ollama/_data に保存されています。ここは管理者権限がないとアクセスできません。
+
+2. ホスト側のフォルダで見えるようにする方法（バインドマウント）
+自分の好きなフォルダ（例：デスクトップや作業用ディレクトリ）の中身を見たい場合は、
+絶対パスで指定する必要があります。
+
+実行コマンド例（Linux / Mac）
+カレントディレクトリの ollama_data フォルダを同期させる場合：
+
+bash
+docker run -d -v $(pwd)/ollama_data:/root/.ollama ollama/ollama
+```
+
+</details>
+
+<BR>
+
+基本実行は以下。　　
+ollamaのイメージを取得、 .ollamaフォルダをマウント、ollamaのコンテナ名で実行
+初回はイメージ取得で3.5GB程度使用
 
 ```bash
-# docker 引数
-# -v [local]:[container] // フォルダマウント
-# -p 
+# docker 基本起動
+docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
 
-# docker 基本起動例
-$ docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+#### 1-2. GPUバックグランド実行
+
+GPUでバックグラウンド動作
+```bash
+# docker 基本起動(GPU)
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+GPUでバックグラウンド動作(home環境にバインド)
+```bash
+# docker 基本起動(GPU) home環境にバインド
+docker run -d --gpus=all -v $(pwd)/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+start_ollama.shの例(chmod +xで実行権限を与えておく)
+```bash
+#!/bin/bash
+
+# docker 基本起動(GPU) home環境にバインド
+docker run -d --gpus=all -v $(pwd)/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+```
+
+#### 1-3. 動作確認
+
+curlを使い、以下のコマンドで確認可能
+
+```bash
+# curlコマンドで動作確認
+curl http://localhost:11434
+```
+
+```bash
+# curlコマンドで動作確認
+curl http://192.168.1.61:11434
+```
+
+正常動作の場合、以下のメッセージを取得
+```bash
+Ollama is running
+```
+
+### 1-4. モデルインストール
+
+#### 1-4-1. モデル確認
+
+モデル確認は以下のURLを参考
+https://ollama.com/library
+
+#### 1-4-2. モデルインストール
+
+docker実行例:
+```bash
+docker exec -it ollama ollama pull qwen3.5:9b
+```
+
+```bash
+docker exec -it ollama ollama pull gpt-oss:20b
+```
+
+#### 1-4-3. インストールモデル確認
+
+docker実行例:
+```bash
+docker exec -it ollama ollama list
+```
+
+curl確認
+```curl
+# curlでインストールモデルを確認
+curl http://localhost:11434/api/tags
+```
+
+curl確認 (IP)
+```curl
+# curlでインストールモデルを確認
+curl http://192.168.1.61:11434/api/tags
+```
+
+bashでcurl出力をjqで成形
+```bash
+# bashでjqを用いて成形
+curl http://localhost:11434/api/tags | jq -C '.'
 ---
+
+# windows11設定
+
+## curlインストール
+
+[curl | Windows11におけるcurl利用までのフロー](https://shelokuma.com/2024/03/20/flow-for-using-command-line-tool-curl-on-windows11/)
+
+step1: [cURL](https://curl.se/) > Download > [Windows downloads](https://curl.se/windows/) > curl for X64 を入手
+step2: zipを解凍し、bin/curl.exeをローカルにコピー後、環境変数のpathに追加
+
+```bash
+# .binフォルダにcurl.exeを入れた場合のpath追加
+C:\Users\$USER\.bin
+```
 
 # other
