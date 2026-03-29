@@ -40,16 +40,21 @@ Swagger UI API ドキュメントを見る場合、以下を参考に
 http://localhost:11434/docs
 ```
 
+OpenWebUIのpiplines有効は、以下を参照
+- [LangfuseとOpenWebUIを統合する方法](https://langfuse.com/integrations/no-code/openwebui)
+
 <BR>
 
 ```bash
 # docker 基本起動 home環境にバインド_debug
 docker run -d \
   -v /home/$USER/open-webui:/app/backend/data \
+  -v /home/$USER/pipelines:/app/pipelines \
   -p 3000:8080 \
   -e ENV=dev \
   -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
   --name open-webui \
+  --add-host=host.docker.internal:host-gateway \
   ghcr.io/open-webui/open-webui:main
 ```
 
@@ -61,10 +66,12 @@ start_openwebui.shの例(chmod +xで実行権限を与えておく)
 # docker 基本起動 home環境にバインド_debug
 docker run -d \
   -v /home/$USER/open-webui:/app/backend/data \
+  -v /home/$USER/pipelines:/app/pipelines \
   -p 3000:8080 \
   -e ENV=dev \
   -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
   --name open-webui \
+  --add-host=host.docker.internal:host-gateway \
   ghcr.io/open-webui/open-webui:main
 ```
 

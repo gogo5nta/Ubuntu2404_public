@@ -55,6 +55,6 @@ docker compose down
 
 ## 2.1 pipline入手
 
-[公式のlangfuse_filter_pipeline](https://github.com/open-webui/pipelines/blob/main/examples/filters/langfuse_filter_pipeline.py)からlangfuse_filter_pipeline.pyを入手
+[公式のlangfuse_filter_pipeline](https://github.com/open-webui/pipelines/blob/039f9c54f8e9f9bcbabde02c2c853e80d25c79e4/examples/filters/langfuse_v3_filter_pipeline.py)からlangfuse_filter_pipeline.pyを入手
 
-[格納先_ssets\python\langfuse_filter_pipeline.py](../assets/python/langfuse_filter_pipeline.py)
+[格納先_ssets\python\langfuse_filter_pipeline.py](../assets/python/langfuse_v3_filter_pipeline.py)
