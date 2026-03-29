@@ -1,8 +1,8 @@
 # Ubuntu2404_public
 Ubuntu24.04の公開用リポジトリ
 
-**作成日**  : 2026/03/23
-**ﾊﾞｰｼﾞｮﾝ** : v0.2
+**作成日**  : 2026/03/29
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
 
 ---
 
@@ -68,6 +68,43 @@ sudo apt install openssh-server
 | Pro | $10（または年額 $100） | 個人開発者 | 無制限コード補完＋高度モデル利用。 |
 | Copilot Pro＋ | $39（または年額 $390） | 個人でモデル選択重視 | 全モデルアクセス、より「プレミアムリクエスト数」多め。 |
 
+---
+
+# dockerメモ
+
+## dockerオプション
+
+[[Docker]覚えておきたいオプションまとめ](https://qiita.com/ryoishizawa/items/637d39574026bbd54dbf)
+
+| オプション | 説明 | 備考 |
+| --- | --- | --- |
+| -p  | ポート設定   | {ホスト_ポート番号} : {コンテナ_ポート番号} |
+| -v  | フォルダ設定 | {ホスト_フォルダ名} : {コンテナ_フォルダ名} |
+| -t  | 標準入力     | ターミナルでの操作 |
+| -it | 継続+標準入力 | ターミナルでの操作を継続 |
+| --name | コンテナ名 | 指定しないとランダムな乱数に |
+
+---
+
+# ollama設定 
+
+## ollama共通設定
+
+## ollama docker設定
+
+### 1. docker実行
+
+[参考1_Dockerを用いたOllamaの実行手順まとめ](https://qiita.com/Chi_corp_123/items/7b3e2617e901a656ede4)
+
+基本実行は以下。  .ollamaフォルダをマウント
+
+```bash
+# docker 引数
+# -v [local]:[container] // フォルダマウント
+# -p 
+
+# docker 基本起動例
+$ docker run -d -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 ---
 
 # other
