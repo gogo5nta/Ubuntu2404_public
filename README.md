@@ -45,6 +45,8 @@ sudo apt install openssh-server
 ## jq
 
 [JSONをLinuxで扱うコマンドの使い方](https://zenn.dev/en2enzo2/articles/e45e6d0aec6c7e)
+[jqコマンドを使ったJSONデータの加工](https://yossi-note.com/how_to_use_the_jq_command/)
+[jq コマンドを使う日常のご紹介](https://qiita.com/takeshinoda@github/items/2dec7a72930ec1f658af)
 
 ファイルを見やすく表示
 ```bash
@@ -261,6 +263,42 @@ bashでcurl出力をjqで成形
 ```bash
 # bashでjqを用いて成形
 curl http://localhost:11434/api/tags | jq -C '.'
+```
+
+### 1.5 ollamaの推論
+
+コマンドライン(curl)で実行
+
+```curl
+curl http://localhost:11434/api/chat -d '{
+  "model": "qwen3.5:9b",
+  "messages": [{
+    "role": "user",
+    "content": "日本語で挨拶して"
+  }],
+  "stream": false
+}' | jq -C
+```
+
+<BR>
+ollama出力をjsonファイルに保存
+```curl
+curl http://localhost:11434/api/chat -d '{
+  "model": "qwen3.5:9b",
+  "messages": [{
+    "role": "user",
+    "content": "日本語で挨拶して"
+  }],
+  "stream": false
+}' | ollama_res.json
+```
+
+jqでollama出力を解析
+```
+cat ollama_res.json | jq '.message.content'
+```
+
+
 ---
 
 # windows11設定
