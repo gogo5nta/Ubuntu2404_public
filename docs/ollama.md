@@ -7,7 +7,7 @@ ollama関係のメモ
 
 ---
 
-# 1 ollama docker設定
+# 1. ollama docker設定
 
 ## 1.1 docker実行
 
