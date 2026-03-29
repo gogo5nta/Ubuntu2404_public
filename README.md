@@ -259,6 +259,13 @@ curl確認 (IP)
 curl http://192.168.1.61:11434/api/tags
 ```
 
+実行中のモデル curl確認 (IP)
+```curl
+# curlでインストールモデルを確認
+curl http://192.168.1.61:11434/api/ps
+```
+
+
 bashでcurl出力をjqで成形
 ```bash
 # bashでjqを用いて成形
