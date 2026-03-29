@@ -267,6 +267,7 @@ curl http://localhost:11434/api/tags | jq -C '.'
 
 ### 1.5 ollamaの推論
 
+#### 1.5.1 ollamaの推論(curl)
 コマンドライン(curl)で実行
 
 ```curl
@@ -282,6 +283,7 @@ curl http://localhost:11434/api/chat -d '{
 
 <BR>
 ollama出力をjsonファイルに保存
+
 ```curl
 curl http://localhost:11434/api/chat -d '{
   "model": "qwen3.5:9b",
@@ -290,13 +292,55 @@ curl http://localhost:11434/api/chat -d '{
     "content": "日本語で挨拶して"
   }],
   "stream": false
-}' | ollama_res.json
+}' > ollama_res.json
+```
+
+ollama出力をjsonファイルに保存　(qwen3 no-thinking)
+[extra_bodyでno_thinking](https://github.com/run-llama/llama_index/issues/18635#issuecomment-3686160674)
+
+```curl
+curl http://localhost:11434/api/chat -d '{
+  "model": "qwen3.5:9b",
+  "messages": [{
+    "role": "user",
+    "content": "日本語で挨拶して"
+  }],
+  "extra_body": {
+    "chat_template_kwargs": {"enable_thinking": false}
+  },
+  "stream": false
+}' > ollama_res_nothinking.json
 ```
 
 jqでollama出力を解析
 ```
 cat ollama_res.json | jq '.message.content'
 ```
+
+<BR>
+
+#### 1.5.2 ollamaの推論(terminal)
+
+軽いモデルをダウンロードして起き
+```bash
+ollama pull gemma3:1b
+```
+
+teminal上で実行
+```bash
+ollama run gemma3:1b
+```
+
+実行結果は以下
+```bash
+>>> 挨拶して
+こんにちは！何かお手伝いできることはありますか？ 😊
+```
+
+## ollama API (日本語)
+
+[Ollama API (日本語)](https://ollama-jp.apidog.io/)
+![alt text](./assets/img/ollama_api_japanese1.jpg)
 
 
 ---
