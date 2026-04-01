@@ -69,6 +69,16 @@ GPUでバックグラウンド動作(home環境にバインド)
 docker run -d --gpus=all -v /home/$USER/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 ```
 
+```bash
+# docker 基本起動(GPU) home環境にバインド
+docker run -d \
+  --gpus=all \
+  -v /home/$USER/ollama:/root/.ollama \
+  -p 11434:11434 \
+  --restart always \
+  --name ollama ollama/ollama
+```
+
 <BR>
 
 start_ollama.shの例(chmod +xで実行権限を与えておく)
@@ -77,7 +87,12 @@ start_ollama.shの例(chmod +xで実行権限を与えておく)
 #!/bin/bash
 
 # docker 基本起動(GPU) home環境にバインド
-docker run -d --gpus=all -v /home/$USER/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+docker run -d \
+  --gpus=all \
+  -v /home/$USER/ollama:/root/.ollama \
+  -p 11434:11434 \
+  --restart always \
+  --name ollama ollama/ollama
 ```
 
 ### 1.3 ollama起動確認
