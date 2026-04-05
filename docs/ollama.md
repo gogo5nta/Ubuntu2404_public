@@ -21,6 +21,10 @@ ollama関係のメモ
 | 2 | [2. Ollama応用](#2-ollama応用) | Ollamaの応用的な使用方法 |
 | 2.1 | [VSCode Github CopilotでOllama利用](#21-vscode-github-copilotでollama利用) | GitHubCopilotとの連携 |
 
+<BR>
+
+---
+
 # 1. ollama docker設定
 
 ## 1.1 docker実行

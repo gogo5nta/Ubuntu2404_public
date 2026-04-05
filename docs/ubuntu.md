@@ -7,6 +7,15 @@ ubuntu24.04関係のメモ
 
 ---
 
+# Table of Contents
+
+| # | セクション | 説明 |
+|---|---|---|
+
+<BR>
+
+---
+
 # ubuntu 24.04 基本設定
 
 ## Remote DeskTop

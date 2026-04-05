@@ -60,13 +60,13 @@ github copilot関係のメモ
 
 <BR>
 
-1. vscodeのGithub Copilotのチャットで、もdるの管理を選択
+1. vscodeのGithub Copilotのチャットで、もdるの管理を選択  
 ![alt text](../assets/img/vscode_github_copilot_model_select1.jpg)
 
-2. ＋モデルを追加でollamaを選択
+2. ＋モデルを追加でollamaを選択  
 ![alt text](../assets/img/vscode_github_copilot_model_select2.jpg)
 
-3. OllamaのURLを記入
+3. OllamaのURLを記入  
 ![alt text](../assets/img/vscode_github_copilot_model_select3.jpg)
 
  | URL | 備考 |
@@ -74,7 +74,7 @@ github copilot関係のメモ
  | http://localhost:11434 | localhost(同じPC)の場合 |
  | http://192.168.1.61:11434 | 他のPCの場合 |
 
-4. Ollamaのモデルが表示されるようにollama内モデルを修正
+4. Ollamaのモデルが表示されるようにollama内モデルを修正  
 ![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
 
 <BR>
