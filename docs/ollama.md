@@ -286,6 +286,20 @@ ollama run後の、質問と応答は以下
 
 <BR>
 
+## 1.7 ollama コマンド一覧
+
+| コマンド | 説明 |
+| --- | --- |
+| ollama run <モデル名>	   | モデルをダウンロード（未入手の場合）し、チャットを開始 |
+| ollama list (または ls)	 | ローカルにインストール済みのモデル一覧を表示 |
+| ollama pull <モデル名>	 | リモートライブラリからモデルをダウンロード（プル） |
+| ollama rm <モデル名>	   | ローカルのモデルを削除 |
+| ollama push <モデル名>	 | ライブラリにモデルをアップロード |
+| ollama serve	          | Ollamaサーバーを起動する（通常は自動） |
+| ollama create <名> -f <ファイル>	|  Modelfileから新しいモデルを作成<BR>ollama create my-llm-jp-4 -f llm-jp-4-32b.Modelfile |
+| ollama cp <元> <新>	    | モデルをコピー |
+| ollama show <モデル名>	| モデルの詳細情報（Modelfile、パラメータ等）を表示 |
+
 ---
 
 # 2. Ollama応用
@@ -312,3 +326,194 @@ ollama run後の、質問と応答は以下
 
 4. Ollamaのモデルが表示されるようにollama内モデルを修正
 ![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
+
+<BR>
+
+---
+
+# 3. Ollamaモデルインストール(詳細)
+
+## VRAM 24Gb (Geforce 3060 x2) 日本語おすすめ
+
+###  1. おすすめの日本語対応モデル (24GB VRAM)
+
+VRAM 24GBでコーディング能力と日本語対応のバランスが良いモデルは以下の通りです。  
+
+| モデル | 特徴 | Ollama コマンド |
+|---|---|---|
+| Qwen2.5-Coder-32B-Instruct (おすすめ) | 現時点でローカルコーディングにおける最高峰モデルの一つ。32Bパラメータあるが、Q4_K_Mなどの量子化を行えば24GB VRAMに収まる。日本語の理解力が高く、コード生成の質も非常に高い。 | ollama run qwen2.5-coder:32b |
+| Qwen2.5-14B-Instruct | 32Bよりも動作が軽快。コーディング性能も十分に高い。 | ollama run qwen2.5:14b |
+| Llama-3-ELYZA-JP-8B | 日本語に特化した8Bモデル。軽量で高速。コンテキストの長さや、より深いコーディング知識が必要ない場合の対話・コード記述用。 | ollama run llama3-elyza |
+
+<BR>
+
+| サイト | 備考 | URL |
+| --- | --- | --- |
+| Qwen2.5-CoderをOllama＋Clineで試す | 環境はUbuntu 22.04 + RTX4090（VRAM24GB） | https://zenn.dev/kun432/scraps/f87398fffd51a7 |
+| 2026 年に 24 GB の VRAM でローカルに実行するのに最適な汎用モデルは | このサイズのセグメントは Qwen3 (30B-A3B、VL-32B、32B など) が主流<BR>現時点では、一般的なチャットボット アシスタントには gemma がおそらく最良の選択 | https://www.reddit.com/r/LocalLLaMA/comments/1qlwibf/what_is_the_best_generalpurpose_model_to_run/?tl=ja#:~:text=16GB%20VRAM%E3%81%AE%E3%81%9F%E3%82%81%E3%81%AE%E3%83%99%E3%82%B9%E3%83%88%E3%83%A2%E3%83%87%E3%83%AB |
+
+<BR>
+
+## 【NG】LLM-jp-4 32B-A3Bのインストール (うまく行かなかった)
+
+#### 概要
+
+国立情報学研究所（NII）の大規模言語モデル研究開発センター（LLMC）が2026年4月3日に公開した「LLM-jp-4 32B-A3B」は、約320億パラメータを持つMoE（Mixture of Experts）アーキテクチャの国産LLMです。  
+https://www.nii.ac.jp/news/release/2026/0403.html
+
+このモデルは、Qwen3 MoE系アーキテクチャを採用しており、高品質なデータ（約12兆トークン）で学習されています。Ollamaを利用してローカル環境で動かすことが可能です。  
+
+### 1. LLM-jp-4 32B-A3B の特徴
+
+- モデル構成: 32B-A3B (MoE: Mixture of Experts)  
+- 学習データ: 約12兆トークンの良質な日本語および英語コーパス  
+- 性能: 日本語MT-Benchで強力な多言語LLM（GPT-4oやQwen3-8Bなど）を上回る性能を記録  
+- context length: 最大約6万5千トークンの入出力に対応  
+
+### 2. Ollamaでの実行方法(日本語が文字化け)
+Hugging Face上のコミュニティや個人によって、Ollama形式（GGUF）のモデルが公開されています。  
+https://huggingface.co/models?apps=ollama&other=base_model:quantized:llm-jp/llm-jp-4-32b-a3b-thinking  
+
+- 推奨モデル名（Hugging Face）: alfredplpl/llm-jp-4-32b-a3b-thinking-gguf など
+- Ollama実行コマンド例:
+
+```bash
+ollama run hf.co/alfredplpl/llm-jp-4-32b-a3b-thinking-gguf
+```
+
+※モデルのバージョンや量子化手法により名前が異なる場合があります
+
+### 2. Ollamaでの実行方法(別方法)
+
+
+
+Modelファイルを作成  
+例: llm-jp-4-32b.Modelfile
+
+```dockerfile
+FROM hf.co/alfredplpl/llm-jp-4-32b-a3b-thinking-gguf:latest
+
+# 日本語プロンプトテンプレートの追加（例）
+TEMPLATE """{{ if .System }}<|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ .Response }}<|im_end|>
+"""
+
+# パラメータ設定
+PARAMETER stop "<|im_start|>"
+PARAMETER stop "<|im_end|>"
+PARAMETER top_p 0.95
+PARAMETER temperature 0.7
+```
+
+以下のコマンド等でollamaのdocker内のbashに移動
+```bash
+docker exec -it ollama bash
+```
+
+以下のコマンドで、ollama create実行
+``` bash
+ollama create my-llm-jp-4 -f llm-jp-4-32b.Modelfile
+```
+
+ollama listの実行結果
+```bash
+NAME                                                      ID              SIZE      MODIFIED          
+my-llm-jp-4:latest                                        32f803b9bc3f    21 GB     4 minutes ago        
+hf.co/alfredplpl/llm-jp-4-32b-a3b-thinking-gguf:latest    2e4199e0f4af    21 GB     About an hour ago    
+llama3.2:3b                                               a80c4f17acd5    2.0 GB    7 days ago           
+gemma3:1b                                                 8648f39daa8f    815 MB    7 days ago           
+gpt-oss:20b                                               17052f91a42e    13 GB     7 days ago           
+qwen3.5:9b                                                6488c96fa5fa    6.6 GB    7 days ago   
+```
+
+<BR>
+
+- 参考
+  - Ollamaのmodelfileの詳細メモ
+    - https://qiita.com/kiyotaman/items/2effed548e7be32da546
+  - 
+
+### 3. 動作環境・動作速度
+
+32Bモデルですが、MoEモデルであるため実行時のメモリ使用量は全結合モデルより抑えられる傾向にあります。  
+- 動作報告: RTX 4060 Ti (16GB VRAM) で動作報告あり。  
+- 速度: RTX 4060 Tiで約42 tok/sec（トークン/秒）を記録。  
+- 必要スペック: 最低でも16GB以上のVRAMを持つGPUか、十分なメインメモリ（32GB以上推奨）が必要。  
+
+### 4. 関連リンク
+- Hugging Face (LLM-jp): llm-jp/llm-jp-4-32b-a3b-base
+  - https://huggingface.co/models?apps=ollama&other=base_model:quantized:llm-jp/llm-jp-4-32b-a3b-thinking
+- 公式ニュース: NIIプレスリリース
+  - https://www.nii.ac.jp/news/release/2026/0403.html
+- 日本語向けのNLPに関する、Pythonライブラリ、LLM、辞書、コーパスに特化したリソース
+  - https://github.com/taishi-i/awesome-japanese-nlp-resources/blob/main/docs/huggingface.ja.md
+
+最新の国産モデルとして高い日本語理解能力が期待されており、Ollamaで手軽に検証できます。
+
+### 5. VSCodeで連携する場合
+
+#### 5.1 VSCodeの「Continue」拡張機能に追加
+
+VSCodeでGitHub Copilotに近い体験をローカルモデルで実現するには、オープンソースの拡張機能 Continue を使用します。  
+
+- 1.インストール:
+  - VSCodeの拡張機能マーケットプレイスから Continue をインストール
+
+- 2.設定の編集:
+  - Continueのサイドバーにある歯車アイコン（Open Config）をクリックし、config.json を開きます。
+
+- 3.モデル情報の追加:
+  - models 配列にOllamaの設定を追記
+  - path: C:\Users\$USER\.continue\config.yaml
+
+```yaml
+name: Local Assistant
+version: 1.0.0
+schema: v1
+models:
+  - name: Llama 3.2 3B
+    provider: ollama
+    model: llama3.2:3b
+    roles:
+      - chat
+      - edit
+    apiBase: http://192.168.1.61:11434
+
+  - name: Qwen3.5-Coder 9B
+    provider: ollama
+    model: qwen3.5:9b
+    roles:
+      - autocomplete
+    apiBase: http://192.168.1.61:11434
+
+  - name: llm-jp-4-32b-a3b-thinking-gguf
+    provider: ollama
+    model: hf.co/alfredplpl/llm-jp-4-32b-a3b-thinking-gguf:latest
+    roles:
+      - chat
+      - edit
+    apiBase: http://192.168.1.61:11434
+
+context:
+  - provider: code
+  - provider: docs
+  - provider: diff
+  - provider: terminal
+  - provider: problems
+  - provider: folder
+  - provider: codebase
+```
+
+- 4.使用開始:
+  - Continueのチャット画面で、追加したモデル（LLM-jp-4）を選択して利用
+
+- 5.参考
+  - 【Windows】VSCodeと拡張機能Continueでollamaにローカル接続
+    - https://www.kotememo.com/posts/vscode_ollama_continue
+  - Ollama + ContinueでVS CodeにローカルLLM開発環境を構築する (Windows / WSL両対応)
+    - https://qiita.com/usxc/items/72c9dd16a261fc502f90
+
