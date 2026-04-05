@@ -2,10 +2,21 @@
 
 ollama関係のメモ
 
-**作成日**  : 2026/03/29
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.1
+**作成日**  : 2026/04/05
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
 
 ---
+
+## Table of Contents
+
+| # | セクション | 説明 |
+|---|---|---|
+| 1 | [1. openwebui docker設定](#1-openwebui-docker設定) | Docker設定 |
+| 1.1 | [1.1 docker実行(open-webui本体)](#11-docker実行open-webui本体) | docker実行 |
+| 1.2 | [1.2 piplies起動（Openwebuiとは別に起動)](#12-piplies起動openwebuiとは別に起動) | piplies起動 |
+| 1.3 | [1.3 piplinesをOpenWebUIに登録](#13-piplinesをOpenWebUIに登録) | piplines登録 |
+| 2 | [2. openwebui設定](#2-openwebui設定) | 設定 |
+| 2.1 | [2.1 タイトルを日本語で生成](#21-タイトルを日本語で生成) | タイトル生成 |
 
 # 1. openwebui docker設定
 

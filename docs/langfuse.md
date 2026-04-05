@@ -2,8 +2,22 @@
 
 langfuse関係のメモ
 
-**作成日**  : 2026/03/29
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.1
+**作成日**  : 2026/04/05
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
+
+---
+
+## Table of Contents
+
+| # | セクション | 説明 |
+|---|---|---|
+| 1 | [1. langfuse docker設定](#1-langfuse-docker設定) | Docker設定 |
+| 1.1 | [1.1 git clone](#11-git-clone) | git clone |
+| 1.2 | [1.2 port変更](#12-port変更) | port変更 |
+| 1.3 | [1.3 docker実行(docker compose)](#13-docker実行docker-compose) | docker compose実行 |
+| 1.4 | [1.4 docker停止(docker compose)](#14-docker停止docker-compose) | docker compose停止 |
+| 2 | [OpenWebUIとの連携](#openwebuiとの連携) | 連携 |
+| 2.1 | [2.1 pipline入手](#21-pipline入手) | pipline入手 |
 
 ---
 

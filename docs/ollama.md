@@ -2,10 +2,24 @@
 
 ollama関係のメモ
 
-**作成日**  : 2026/03/29
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.1
+**作成日**  : 2026/04/05
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
 
 ---
+
+# Table of Contents
+
+| # | セクション | 説明 |
+|---|---|---|
+| 1 | [1. ollama docker設定](#1-ollama-docker設定) | Docker環境でのOllamaセットアップ |
+| 1.1 | [docker実行](#11-docker実行) | 基本的なDocker実行方法 |
+| 1.2 | [GPUバックグランド実行](#12-gpuバックグランド実行) | GPU利用時の実行方法 |
+| 1.3 | [ollama起動確認](#13-ollama起動確認) | 動作確認方法 |
+| 1.4 | [モデルインストール](#14-モデルインストール) | モデルのインストール手順 |
+| 1.5 | [推論](#15-推論) | 推論の実行方法 |
+| 1.6 | [ollama API (日本語)](#16-ollama-api-日本語) | API仕様の確認 |
+| 2 | [2. Ollama応用](#2-ollama応用) | Ollamaの応用的な使用方法 |
+| 2.1 | [VSCode Github CopilotでOllama利用](#21-vscode-github-copilotでollama利用) | GitHubCopilotとの連携 |
 
 # 1. ollama docker設定
 
@@ -265,3 +279,32 @@ ollama run後の、質問と応答は以下
 
 [Ollama API (日本語)](https://ollama-jp.apidog.io/)
 ![alt text](../assets/img/ollama_api_japanese1.jpg)
+
+<BR>
+
+---
+
+# 2. Ollama応用
+
+## 2.1 VSCode Github CopilotでOllama利用
+
+[参考1_VSCode - GitHub CopilotをローカルLLMで動かしてみた(Ollama, gpt-oss:20b)](https://zenn.dev/okyugog/articles/6666289d84fed6)
+
+<BR>
+
+1. vscodeのGithub Copilotのチャットで、もdるの管理を選択
+![alt text](../assets/img/vscode_github_copilot_model_select1.jpg)
+
+2. ＋モデルを追加でollamaを選択
+![alt text](../assets/img/vscode_github_copilot_model_select2.jpg)
+
+3. OllamaのURLを記入
+![alt text](../assets/img/vscode_github_copilot_model_select3.jpg)
+
+ | URL | 備考 |
+ |-----|------|
+ | http://localhost:11434 | localhost(同じPC)の場合 |
+ | http://192.168.1.61:11434 | 他のPCの場合 |
+
+4. Ollamaのモデルが表示されるようにollama内モデルを修正
+![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
