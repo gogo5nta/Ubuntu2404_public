@@ -9,39 +9,33 @@ ollama関係のメモ
 
 # Table of Contents
 
-| # | セクション | 説明 |
-|---|---|---|
-| 1 | [1. ollama docker設定](#1-ollama-docker設定) | Docker環境でのOllamaセットアップ |
-| 1.1 | [docker実行](#11-docker実行) | 基本的なDocker実行方法 |
-| 1.2 | [GPUバックグランド実行](#12-gpuバックグランド実行) | GPU利用時の実行方法 |
-| 1.3 | [ollama起動確認](#13-ollama起動確認) | 動作確認方法 |
-| 1.4 | [モデルインストール](#14-モデルインストール) | モデルのインストール手順 |
-| 1.4.1 | [モデル確認 (URL)](#141-モデル確認-url) | インストール可能なモデル一覧 |
-| 1.4.1.1 | [ollama.com/library](#1411-ollacomlibrary) | モデル一覧の URL |
-| 1.4.2 | [モデルインストール](#142-モデルインストール) | docker でのモデルインストール |
-| 1.4.3 | [モデル確認 (local)](#143-モデル確認-local) | ローカルにインストールしたモデル一覧 |
-| 1.5 | [推論](#15-推論) | 推論の実行方法 |
-| 1.5.1 | [推論 (curl)](#151-推論-curl) | curl を使った推論 |
-| 1.5.2 | [推論を json 形式で保存 (curl)](#152-推論を-json-形式で保存-curl) | ollama 出力を json ファイルに保存 |
-| 1.5.3 | [ollama の推論 (terminal)](#153-ollama の推論-terminal) | terminal 上で ollama run を実行 |
-| 1.6 | [ollama API (日本語)](#16-ollama-api-日本語) | API 仕様の確認 |
-| 1.7 | [ollama コマンド一覧](#17-ollama コマンド一覧) | Ollama コマンド一覧 |
-| 2 | [2. Ollama 応用](#2-ollama 応用) | Ollama の応用的な使用方法 |
-| 2.1 | [VSCode Github Copilot で Ollama 利用](#21-vscode-github-copilot で ollama 利用) | GitHubCopilot との連携 |
-| 3 | [3. Ollama モデルインストール (詳細)](#3-ollama モデルインストール-詳細) | VRAM 別おすすめモデル |
-| 3.1 | [VRAM 12Gb (Geforce 3060 x1) 日本語おすすめ](#31-vram-12gb-geforce-3060-x1-日本語おすすめ) | 12GB VRAM 環境向けモデル |
-| 3.2 | [VRAM 24Gb (Geforce 3060 x2) 日本語おすすめ](#32-vram-24gb-geforce-3060-x2-日本語おすすめ) | 24GB VRAM 環境向けモデル |
-| 3.3 | [【NG】LLM-jp-4 32B-A3B のインストール (うまく行かなかった)](#3-ng-llm-jp-4-32b-a3b のインストール-うまく行かなかった) | 日本語モデルのインストール問題 |
-| 3.3.1 | [LLM-jp-4 32B-A3B の特徴](#331-llm-jp-4-32b-a3b の特徴) | モデルの概要 |
-| 3.3.2 | [Ollama での実行方法 (日本語が文字化け)](#332-ollama での実行方法-日本語が文字化け) | 文字化け問題と解決策 |
-| 3.3.3 | [Ollama での実行方法 (別方法)](#333-ollama での実行方法-別方法) | Modelfile を使ったインストール |
-| 3.3.4 | [動作環境・動作速度](#334-動作環境・動作速度) | 性能と速度の報告 |
-| 3.3.5 | [関連リンク](#335-関連リンク) | 関連するリンク集 |
-| 3.3.6 | [VSCode で連携する場合](#336-vscode で連携する場合) | VSCode 拡張機能との連携 |
-| 3.3.6.1 | [VSCode の「Continue」拡張機能に追加](#3361-vscode の-continue-拡張機能に追加) | Continue 拡張機能の設定 |
-
-<BR>
-
+* [1. ollama docker設定](#1-ollama-docker設定)
+* [1.1 docker実行](#11-docker実行)
+* [1.2 GPUバックグランド実行](#12-gpuバックグランド実行)
+* [1.3 ollama起動確認](#13-ollama起動確認)
+* [1.4 モデルインストール](#14-モデルインストール)
+    * [モデル確認 (URL)](#141-モデル確認-url)
+    * [モデルインストール](#142-モデルインストール)
+    * [モデル確認 (local)](#143-モデル確認-local)
+* [1.5 推論](#15-推論)
+    * [推論 (curl)](#151-推論-curl)
+    * [推論を json 形式で保存 (curl)](#152-推論を-json-形式で保存-curl)
+    * [ollama の推論 (terminal)](#153-ollama の推論-terminal)
+* [1.6 ollama API (日本語)](#16-ollama-api-日本語)
+* [1.7 ollama コマンド一覧](#17-ollama コマンド一覧)
+* [2. Ollama 応用](#2-ollama 応用)
+    * [VSCode Github Copilot で Ollama 利用](#21-vscode-github-copilot で ollama 利用)
+* [3. Ollama モデルインストール (詳細)](#3-ollama モデルインストール-詳細)
+    * [VRAM 12Gb (Geforce 3060 x1) 日本語おすすめ](#31-vram-12gb-geforce-3060-x1-日本語おすすめ)
+    * [VRAM 24Gb (Geforce 3060 x2) 日本語おすすめ](#32-vram-24gb-geforce-3060-x2-日本語おすすめ)
+    * [【NG】LLM-jp-4 32B-A3B のインストール (うまく行かなかった)](#3-ng-llm-jp-4-32b-a3b のインストール-うまく行かなかった)
+        * [LLM-jp-4 32B-A3B の特徴](#331-llm-jp-4-32b-a3b の特徴)
+        * [Ollama での実行方法 (日本語が文字化け)](#332-ollama での実行方法-日本語が文字化け)
+        * [Ollama での実行方法 (別方法)](#333-ollama での実行方法-別方法)
+        * [動作環境・動作速度](#334-動作環境・動作速度)
+        * [関連リンク](#335-関連リンク)
+        * [VSCode で連携する場合](#336-vscode で連携する場合)
+            * [VSCode の「Continue」拡張機能に追加](#3361-vscode の-continue-拡張機能に追加)
 ---
 
 # 1. ollama docker設定
