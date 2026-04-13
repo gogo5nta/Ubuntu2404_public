@@ -2,8 +2,8 @@
 
 ollama関係のメモ
 
-**作成日**  : 2026/04/05
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
+**作成日**  : 2026/04/13
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
 
 ---
 
@@ -332,6 +332,18 @@ ollama run後の、質問と応答は以下
 ---
 
 # 3. Ollamaモデルインストール(詳細)
+
+## VRAM 12Gb (Geforce 3060 x1) 日本語おすすめ
+
+| モデル | 特徴 | Ollama コマンド |
+|---|---|---|
+| Gemma4 | Googleが2026年にリリース| ollama run gemma4:e2b<BR>ollama run gemma4:e4b<BR>ollama run gemma4:26b |
+| Qweb3.5 | バランスが良い | ollama run qwen3.5:9b |
+
+- MacBook (16GB) でGemma 4をローカル実行
+  - https://dev.classmethod.jp/articles/run-gemma4-locally-on-macbook-with-ollama/
+- DGX Spark で Gemma 4 vs Qwen 3.5 MoEモデル対決ベンチマーク
+  - https://qiita.com/nabe2030/items/fc3db819470edcca5aee
 
 ## VRAM 24Gb (Geforce 3060 x2) 日本語おすすめ
 
