@@ -16,6 +16,8 @@ ubuntu24.04関係のメモ
 | 1.2 | [openssh-server](#openssh-server) | SSHサーバ |
 | 1.3 | [jq](#jq) | JSONツール |
 | 1.4 | [du](#du) | ディレクトリサイズ |
+| 2 | [ubuntu 24.04 拡張設定](#ubuntu-24-04-拡張設定) | 拡張設定 |
+| 2.1 | [nvidia_driver_インストール](#nvidia_driver_インストール) | NVIDIAドライバインストール |
 
 <BR>
 
