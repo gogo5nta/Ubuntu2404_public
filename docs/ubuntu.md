@@ -2,8 +2,8 @@
 
 ubuntu24.04関係のメモ
 
-**作成日**  : 2026/04/05
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
+**作成日**  : 2026/06/09
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
 
 ---
 
@@ -68,3 +68,34 @@ ubuntu上でフォルダ容量確認する場合
 ```bash
 du -h
 ```
+
+<BR>
+
+---
+
+# ubuntu 24.04 拡張設定
+
+## nvidia_driver_インストール
+
+Step1: 鍵インストール(Microsoft)
+
+```bash
+# Microsoft の公開鍵を keyring に登録:
+curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /usr/share/keyrings/packages.microsoft.gpg >/dev/null
+
+# Microsoft の公開鍵を keyring に登録_古い方法（非推奨）:
+# sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB3E94ADBE1229CF
+```
+
+Step2: NVIDIAのリポジトリ登録(Cuda用を活用)
+
+[参考_【Ubuntu 24.04 LTS】NVIDIAドライバおよびCUDAのインストール](https://qiita.com/YaezakuraP/items/507a7a9713b4e6f63f4b)
+
+```bash
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2404/x86_64/cuda-keyring_1.1-1_all.deb
+sudo dpkg -i cuda-keyring_1.1-1_all.deb
+sudo apt-get update
+```
+
+以降は、Ubuntuのプリインストールアプリの追加のドライバーで、好きなdriverを選択してインストール。
+設定 > 追加のドライバー > nvidia-driver-595 など
