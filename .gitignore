@@ -210,3 +210,6 @@ __marimo__/
 # info folder
 info/*.log
 info/*.txt
+
+# _old folder
+_old/
