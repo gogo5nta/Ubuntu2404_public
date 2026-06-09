@@ -62,7 +62,7 @@ sudo apt install ./google-chrome-stable_current_amd64.deb
 echo "install vscode"
 
 # Install tools
-sudo apt install -y software-properties-common apt-transport-https wget -y
+sudo apt install -y software-properties-common apt-transport-https wget curl -y
 
 # Import the Microsoft GPG key
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null
