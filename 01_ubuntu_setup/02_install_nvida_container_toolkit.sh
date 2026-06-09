@@ -1,6 +1,5 @@
 #!/bin/bash
-# update 2026.03.23 22:00JST
-
+# update 2026-06-10 02:00:00JST
 
 # Reference
 # https://qiita.com/ryome/items/29b3241d32cf63849f63
@@ -17,10 +16,12 @@ sudo apt update
 sudo apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 
 # Get Docker's official GPG key and add the Docker repository to APT sources:
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
 # Add the Docker repository to APT sources:
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
 
 # Update the package database with Docker packages from the newly added repo:
 sudo apt update
@@ -59,7 +60,12 @@ sudo apt update
 sudo apt install -y nvidia-container-toolkit
 
 # chech NVIDIA Container Toolkit
-nvidia-container-toolkit info
+# --- old version ---
+# nvidia-container-toolkit info
+# --- new version ---
+# nvidia-ctk が提供されているバージョンであれば以下コマンドが使えます
+sudo nvidia-ctk runtime configure --runtime=docker
+sudo systemctl restart docker
 
 # if you have nvidia-docker2 installed, show me
 # Usage of nvidia-container-toolkit:
