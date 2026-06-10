@@ -129,8 +129,7 @@ OpenAI API接続の管理の「＋」を押して、以下の入力。piplines
 langfuse_v3_filter_pipeline.pyを入手し、
 /home/$USER/piplines のフォルダに格納
 
-or [1.3](#13-piplinesをopenwebuiに登録)設定後に、管理者パネル > 設定 > piplinesを選択し、  
-ダウンロードした[langfuse_v3_filter_pipeline.py](https://github.com/open-webui/pipelines/blob/main/examples/filters/langfuse_v3_filter_pipeline.py)をupload。以下を設定し保存を押す
+or [1.3](#13-piplinesをopenwebuiに登録)設定後に、管理者パネル > 設定 > piplinesを選択し、Github URLからインストールでpiplineのファイル(python)があるURLを入力。以下を設定し保存を押す
 
 | 内容 | 値 | 備考 |
 | --- | --- | --- |
