@@ -1,5 +1,5 @@
 """
-title: Langfuse Filter Pipeline for v3 Custom1
+title: Langfuse Filter Pipeline for v3
 author: open-webui
 date: 2025-07-31
 version: 0.0.1
@@ -214,40 +214,18 @@ class Pipeline:
                 }
                 
                 # Create trace with all necessary information
-                # --- Add Custom 2026-06-10 ---
-                # Determine primary model identifier for naming
-                created_model_name = self.model_names.get(chat_id, {}).get("name") or self.model_names.get(chat_id, {}).get("id") or "unknown"
-
-                # --- Add Custom 2026-06-10 ---
-                # Extract last user message text for trace input
-                user_question_text = ""
-                for m in reversed(body.get("messages", [])):
-                    if m.get("role") == "user":
-                        content = m.get("content")
-                        if isinstance(content, dict):
-                            user_question_text = content.get("text") or content.get("content") or json.dumps(content)
-                        elif content is not None:
-                            user_question_text = str(content)
-                        break
-
-                # --- Add Custom 2026-06-10 ---
-                # Binary indicators for presence of input/output (kept for compatibility)
-                input_binary = 1 if body.get("messages") else 0
-
-                # --- Add Custom 2026-06-10 ---
                 trace = self.langfuse.start_span(
-                    name=f"OpenWebUI_{created_model_name}_{chat_id}",
-                    input=user_question_text,
+                    name=f"chat:{chat_id}",
+                    input=body,
                     metadata=trace_metadata
                 )
 
-                # --- Add Custom 2026-06-10 ---
-                # Set additional trace attributes (use user question text as input)
+                # Set additional trace attributes
                 trace.update_trace(
                     user_id=user_email,
                     session_id=chat_id,
                     tags=tags_list if tags_list else None,
-                    input=user_question_text,
+                    input=body,
                     metadata=trace_metadata,
                 )
 
@@ -289,22 +267,10 @@ class Pipeline:
                 "event_id": str(uuid.uuid4()),
             }
             
-            # Add Custom 2026-06-10
-            # Log the actual user question text as event input
-            event_input_text = ""
-            for m in reversed(body.get("messages", [])):
-                if m.get("role") == "user":
-                    content = m.get("content")
-                    if isinstance(content, dict):
-                        event_input_text = content.get("text") or content.get("content") or json.dumps(content)
-                    elif content is not None:
-                        event_input_text = str(content)
-                    break
-            # Add Custom 2026-06-10
             event_span = trace.start_span(
                 name=f"user_input:{str(uuid.uuid4())}",
                 metadata=event_metadata,
-                input=event_input_text,
+                input=body["messages"],
             )
             event_span.end()
             self.log(f"User input event logged for chat_id: {chat_id}")
@@ -377,24 +343,8 @@ class Pipeline:
         }
         
         # Update trace with output and complete metadata
-        # Add Custom 2026-06-10
-        # Extract assistant output text for trace output
-        assistant_output_text = ""
-        if assistant_message:
-            if isinstance(assistant_message, dict):
-                content = assistant_message.get("content")
-                if isinstance(content, dict):
-                    assistant_output_text = content.get("text") or content.get("content") or json.dumps(content)
-                elif content is not None:
-                    assistant_output_text = str(content)
-                else:
-                    assistant_output_text = json.dumps(assistant_message)
-            else:
-                assistant_output_text = str(assistant_message)
-
-        # Add Custom 2026-06-10
         trace.update_trace(
-            output=assistant_output_text,
+            output=assistant_message,
             metadata=complete_trace_metadata,
             tags=tags_list if tags_list else None,
         )
@@ -428,25 +378,11 @@ class Pipeline:
                 "generation_id": str(uuid.uuid4()),
             }
             
-            # Add Custom 2026-06-10
-            # Use model name-based naming convention and include user question text as input
-            gen_name_model = model_name or model_id or "unknown"
-            # Extract last user message for generation input (reuse logic)
-            gen_input_text = ""
-            for m in reversed(body.get("messages", [])):
-                if m.get("role") == "user":
-                    content = m.get("content")
-                    if isinstance(content, dict):
-                        gen_input_text = content.get("text") or content.get("content") or json.dumps(content)
-                    elif content is not None:
-                        gen_input_text = str(content)
-                    break
-            # Add Custom 2026-06-10
             generation = trace.start_generation(
-                name=f"OpenWebUI_{gen_name_model}_{chat_id}",
+                name=f"llm_response:{str(uuid.uuid4())}",
                 model=model_value,
-                input=gen_input_text,
-                output=assistant_output_text,
+                input=body["messages"],
+                output=assistant_message,
                 metadata=generation_metadata,
             )
 
