@@ -41,6 +41,7 @@ nano docker-compose.yml
 ```
 
 L69 - 74当たりを修正。ポート番号 ホスト:コンテナ
+def 3000:000 > 3001:3000に変更
 
 ```text
   langfuse-web:

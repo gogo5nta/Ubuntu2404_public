@@ -2,8 +2,8 @@
 
 ollama関係のメモ
 
-**作成日**  : 2026/04/05
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
+**作成日**  : 2026/06/10
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
 
 ---
 
@@ -36,8 +36,27 @@ docker run -d -v open-webui:/app/backend/data -p 3000:8080 -e OLLAMA_BASE_URL=ht
 ```
 
 ```bash
-# docker 基本起動 home環境にバインド
-docker run -d -v /home/$USER/open-webui:/app/backend/data -p 3000:8080 -e OLLAMA_BASE_URL=http://192.168.1.61:11434 --name open-webui ghcr.io/open-webui/open-webui:main
+# docker 基本起動 home環境にバインド 再起動
+docker run -d -v /home/$USER/open-webui:/app/backend/data -p 3000:8080 -e OLLAMA_BASE_URL=http://192.168.1.61:11434 --name open-webui ghcr.io/open-webui/open-webui:main --restart=always
+```
+
+<BR>
+
+sh_sample/open-webui_start.sh
+**chmod +xで実行権限付与**
+
+```bash
+#!/bin/sh
+
+# docker 基本起動(GPU) home環境(.ollama)にバインド＆コンテナ自動起動 & devモード
+docker run -d \
+  -v /home/$USER/open-webui:/app/backend/data \
+  -p 3000:8080 \
+  -e OLLAMA_BASE_URL=http://192.168.1.7:11434 \
+  -e ENV=dev \
+  --name open-webui \ 
+  --restart=always \
+  ghcr.io/open-webui/open-webui:main
 ```
 
 <BR>
@@ -49,36 +68,6 @@ Swagger UI API ドキュメントを見る場合、以下を参考に
 ```bash
 # Swagger UI API  起動時に-e ENV=dev必要
 http://localhost:11434/docs
-```
-
-<BR>
-
-```bash
-# docker 基本起動 home環境にバインド_debug
-docker run -d \
-  -v /home/$USER/open-webui:/app/backend/data \
-  -p 3000:8080 \
-  -e ENV=dev \
-  -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
-  --name open-webui \
-  --restart always \
-  ghcr.io/open-webui/open-webui:main
-```
-
-start_openwebui.shの例(chmod +xで実行権限を与えておく)
-
-```bash
-#!/bin/bash
-
-# docker 基本起動 home環境にバインド_debug
-docker run -d \
-  -v /home/$USER/open-webui:/app/backend/data \
-  -p 3000:8080 \
-  -e ENV=dev \
-  -e OLLAMA_BASE_URL=http://192.168.1.61:11434 \
-  --name open-webui \
-  --restart always \
-  ghcr.io/open-webui/open-webui:main
 ```
 
 # 1.2 piplies起動（Openwebuiとは別に起動)
