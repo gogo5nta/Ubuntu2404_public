@@ -54,7 +54,7 @@ docker run -d \
   -p 3000:8080 \
   -e OLLAMA_BASE_URL=http://192.168.1.7:11434 \
   -e ENV=dev \
-  --name open-webui \ 
+  --name open-webui \
   --restart=always \
   ghcr.io/open-webui/open-webui:main
 ```
@@ -88,7 +88,10 @@ docker run -d \
   ghcr.io/open-webui/pipelines:main
 ```
 
-start_piplines.shの例(chmod +xで実行権限を与えておく)
+<BR>
+
+sh_sample/piplines_start.sh
+**chmod +xで実行権限付与**
 
 ```bash
 #!/bin/bash
@@ -107,14 +110,35 @@ docker run -d \
 # 1.3 piplinesをOpenWebUIに登録
 
 OpenWebUIに管理者でログイン > 管理者パネル > 設定 > 接続  
-OpenAI API接続の管理の「＋」を押して
+OpenAI API接続の管理の「＋」を押して、以下の入力。piplines  
+への接続が可能になる。
+
 | 内容 | 値 | 備考 |
 | --- | --- | --- |
-| URL | http://192.168.1.61:9099 | ※localhostではNG。IP固定 |
+| URL | http://192.168.1.7:9099 | ※localhostではNG。IP固定 |
 | API-KEY | 0p3n-w3bu! | |
 | API-Type | Respnones | |
 
   - ![alt text](../assets/img/open-webui_add_connect_for_piplines1.jpg)
+
+# 1.4 Langfuse_V3用ファイル準備
+
+- [langfuse_v3_filter_pipeline.py](https://github.com/open-webui/pipelines/blob/main/examples/filters/langfuse_v3_filter_pipeline.py)
+- [解説HP](https://langfuse.com/integrations/no-code/openwebui)
+
+langfuse_v3_filter_pipeline.pyを入手し、
+/home/$USER/piplines のフォルダに格納
+
+or [1.3](#13-piplinesをopenwebuiに登録)設定後に、管理者パネル > 設定 > piplinesを選択し、  
+ダウンロードした[langfuse_v3_filter_pipeline.py](https://github.com/open-webui/pipelines/blob/main/examples/filters/langfuse_v3_filter_pipeline.py)をupload。以下を設定し保存を押す
+
+| 内容 | 値 | 備考 |
+| --- | --- | --- |
+| Secret Key | xxx | LangfuseでKEY発行 |
+| Public Key | xxx | LangfuseでKEY発行 |
+| Host | http://192.168.1.7:3001 | LangfuseのURL |
+| Debug | 有効 | 念の為 On |
+<BR>
 
 ---
 
