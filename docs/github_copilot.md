@@ -78,3 +78,11 @@ github copilot関係のメモ
 ![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
 
 <BR>
+
+---
+
+# Langfuseのskill.md
+
+[公式HP1_Langfuse_Agent_Skill](https://langfuse.com/docs/api-and-data-platform/features/agent-skill)
+
+[公式HP2_Github_Code](https://github.com/langfuse/skills/blob/main/skills/langfuse/SKILL.md)
