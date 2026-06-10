@@ -2,19 +2,18 @@
 
 ollama関係のメモ
 
-**作成日**  : 2026/04/13
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
+**作成日**  : 2026/06/10
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.4
 
 ---
-
+ 
 # Table of Contents
 
-- [ollama.md](#ollamamd)
-- [Table of Contents](#table-of-contents)
 - [1. ollama docker設定](#1-ollama-docker設定)
   - [1.1 docker実行](#11-docker実行)
   - [1.2 GPUバックグランド実行](#12-gpuバックグランド実行)
     - [1.3 ollama起動確認](#13-ollama起動確認)
+    - [1.3.1 コンテナ(ollama)に入る](#131-コンテナollamaに入る)
   - [1.4 モデルインストール](#14-モデルインストール)
     - [1.4.1 モデル確認(URL)](#141-モデル確認url)
     - [1.4.2 モデルインストール](#142-モデルインストール)
@@ -34,7 +33,7 @@ ollama関係のメモ
     - [1. おすすめの日本語対応モデル (24GB VRAM)](#1-おすすめの日本語対応モデル-24gb-vram)
     - [2. Geforce3060 x 2のModelfile例 (24GB VRAM)](#2-geforce3060-x-2のmodelfile例-24gb-vram)
   - [【NG】LLM-jp-4 32B-A3Bのインストール (うまく行かなかった)](#ngllm-jp-4-32b-a3bのインストール-うまく行かなかった)
-      - [概要](#概要)
+    - [概要](#概要)
     - [1. LLM-jp-4 32B-A3B の特徴](#1-llm-jp-4-32b-a3b-の特徴)
     - [2. Ollamaでの実行方法(日本語が文字化け)](#2-ollamaでの実行方法日本語が文字化け)
     - [2. Ollamaでの実行方法(別方法)](#2-ollamaでの実行方法別方法)
@@ -52,7 +51,7 @@ ollama関係のメモ
 [参考 2_Docker 上で GPU を使って Ollama を動かす](https://ishikawa-pro.hatenablog.com/entry/2025/01/16/192126){: .anchor}
 
 <details>
-  <summary>フォルダマウントの注意をクリックで展開</summary>
+  <summary>フォルダマウントの注意(クリックで展開)</summary>
 
 ```text
 Dockerコマンドで -v ollama:/root/.ollama と指定した場合、
@@ -99,15 +98,31 @@ GPUでバックグラウンド動作
 docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
 ```
 
+<BR>
+
+コンテナを常に自動起動
+```bash
+docker run -d --gpus=all -v ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama --restart=always
+```
+
+<BR>
+
 GPUでバックグラウンド動作(home環境にバインド)
 
 ```bash
 # docker 基本起動(GPU) home環境にバインド
-docker run -d --gpus=all -v /home/$USER/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+docker run -d --gpus=all -v /home/$USER/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama --restart=always
 ```
 
+<BR>
+
+sh_sample/ollama_start.sh  
+**chmod +xで実行権限付与**
+
 ```bash
-# docker 基本起動(GPU) home環境にバインド
+#!/bin/sh
+
+# docker 基本起動(GPU) home環境(.ollama)にバインド＆コンテナ自動起動
 docker run -d \
   --gpus=all \
   -v /home/$USER/ollama:/root/.ollama \
@@ -117,20 +132,6 @@ docker run -d \
 ```
 
 <BR>
-
-start_ollama.shの例(chmod +xで実行権限を与えておく)
-
-```bash
-#!/bin/bash
-
-# docker 基本起動(GPU) home環境にバインド
-docker run -d \
-  --gpus=all \
-  -v /home/$USER/ollama:/root/.ollama \
-  -p 11434:11434 \
-  --restart always \
-  --name ollama ollama/ollama
-```
 
 ### 1.3 ollama起動確認
 
@@ -143,7 +144,7 @@ curl http://localhost:11434
 
 ```bash
 # curlコマンドで動作確認
-curl http://192.168.1.61:11434
+curl http://192.168.1.7:11434
 ```
 
 正常動作の場合、以下のメッセージを取得
@@ -151,6 +152,29 @@ curl http://192.168.1.61:11434
 ```bash
 Ollama is running
 ```
+
+<BR>
+
+### 1.3.1 コンテナ(ollama)に入る
+
+以下のコマンドでコンテナ内のbashに入る
+
+```bash
+# コンテナ(ollama)内のbashに入る
+docker exec -it ollama bash
+```
+
+sh_sample/ollama_exec.sh  
+**chmod +xで実行権限付与**
+
+```bash
+#!/bin/sh
+
+# コンテナ(ollama)内のbashに入る
+docker exec -it ollama bash
+```
+
+<BR>
 
 ## 1.4 モデルインストール
 
@@ -193,14 +217,14 @@ curl確認 (IP)
 
 ```bash
 # curlでインストールモデルを確認
-curl http://192.168.1.61:11434/api/tags
+curl http://192.168.1.7:11434/api/tags
 ```
 
 実行中のモデル curl確認 (IP)
 
 ```bash
 # curlで実行中モデルを確認
-curl http://192.168.1.61:11434/api/ps
+curl http://192.168.1.7:11434/api/ps
 ```
 
 <BR>
@@ -341,7 +365,7 @@ ollama run後の、質問と応答は以下
  | URL | 備考 |
  |-----|------|
  | http://localhost:11434 | localhost(同じPC)の場合 |
- | http://192.168.1.61:11434 | 他のPCの場合 |
+ | http://192.168.1.7:11434 | 他のPCの場合 |
 
 4. Ollamaのモデルが表示されるようにollama内モデルを修正
 ![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
@@ -553,14 +577,14 @@ models:
     roles:
       - chat
       - edit
-    apiBase: http://192.168.1.61:11434
+    apiBase: http://192.168.1.7:11434
 
   - name: Qwen3.5-Coder 9B
     provider: ollama
     model: qwen3.5:9b
     roles:
       - autocomplete
-    apiBase: http://192.168.1.61:11434
+    apiBase: http://192.168.1.7:11434
 
   - name: llm-jp-4-32b-a3b-thinking-gguf
     provider: ollama
@@ -568,7 +592,7 @@ models:
     roles:
       - chat
       - edit
-    apiBase: http://192.168.1.61:11434
+    apiBase: http://192.168.1.7:11434
 
 context:
   - provider: code
