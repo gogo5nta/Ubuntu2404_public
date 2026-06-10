@@ -2,8 +2,8 @@
 
 github copilot関係のメモ
 
-**作成日**  : 2026/04/05
-**ﾊﾞｰｼﾞｮﾝ** : v0.0.2
+**作成日**  : 2026/06/10
+**ﾊﾞｰｼﾞｮﾝ** : v0.0.3
 
 ---
 
@@ -60,7 +60,7 @@ github copilot関係のメモ
 
 <BR>
 
-1. vscodeのGithub Copilotのチャットで、もdるの管理を選択  
+1. vscodeのGithub Copilotのチャットで、モデルの管理を選択  
 ![alt text](../assets/img/vscode_github_copilot_model_select1.jpg)
 
 2. ＋モデルを追加でollamaを選択  
@@ -72,7 +72,7 @@ github copilot関係のメモ
  | URL | 備考 |
  |-----|------|
  | http://localhost:11434 | localhost(同じPC)の場合 |
- | http://192.168.1.61:11434 | 他のPCの場合 |
+ | http://192.168.1.7:11434 | 他の PC の場合 |
 
 4. Ollamaのモデルが表示されるようにollama内モデルを修正  
 ![alt text](../assets/img/vscode_github_copilot_model_select4.jpg)
