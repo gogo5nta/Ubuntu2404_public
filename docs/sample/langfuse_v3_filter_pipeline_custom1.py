@@ -7,6 +7,12 @@ license: MIT
 description: A filter pipeline that uses Langfuse v3.
 requirements: langfuse>=3.0.0
 """
+# --- Add 2026-06-14 ---
+# Traceの出力を以下に修正
+# Name: OpenWebUIのモデル名-セッションID
+# Input: ユーザーの質問文
+# Output: OpenWebUIの回答文
+
 
 from typing import List, Optional
 import os
@@ -205,6 +211,12 @@ class Pipeline:
             self.log(f"Creating new trace for chat_id: {chat_id}")
 
             try:
+                # --- Add 2026-06-14 ---
+                # Get model name for trace name
+                model_info = metadata.get("model", {})
+                model_name = self.model_names.get(chat_id, {}).get("name", "unknown")
+                trace_name = f"{model_name}-{chat_id}"
+                
                 # Create trace using Langfuse v3 API with complete data
                 trace_metadata = {
                     **metadata,
@@ -213,10 +225,15 @@ class Pipeline:
                     "interface": "open-webui",
                 }
                 
+                # --- Add 2026-06-14 ---
+                # Extract user message (input)
+                user_messages = [msg for msg in body.get("messages", []) if msg.get("role") == "user"]
+                last_user_message = user_messages[-1].get("content") if user_messages else None
+                
                 # Create trace with all necessary information
                 trace = self.langfuse.start_span(
-                    name=f"chat:{chat_id}",
-                    input=body,
+                    name=trace_name,
+                    input=last_user_message,
                     metadata=trace_metadata
                 )
 
@@ -327,11 +344,17 @@ class Pipeline:
                     }
                     self.log(f"Usage data extracted: {usage}")
 
+        # --- Add 2026-06-14 ---
         # Update the trace with complete output information
         trace = self.chat_traces[chat_id]
         
         metadata["type"] = task_name
         metadata["interface"] = "open-webui"
+        
+        # --- Add 2026-06-14 ---
+        # Get model name and update trace name
+        model_name = self.model_names.get(chat_id, {}).get("name", "unknown")
+        trace_name = f"{model_name}-{chat_id}"
         
         # Create complete trace metadata with all information
         complete_trace_metadata = {
@@ -342,8 +365,10 @@ class Pipeline:
             "task": task_name,
         }
         
-        # Update trace with output and complete metadata
+        # --- Add 2026-06-14 ---
+        # Update trace with output (answer) and complete metadata
         trace.update_trace(
+            name=trace_name,
             output=assistant_message,
             metadata=complete_trace_metadata,
             tags=tags_list if tags_list else None,
