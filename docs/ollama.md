@@ -9,6 +9,8 @@ ollama関係のメモ
  
 # Table of Contents
 
+- [ollama.md](#ollamamd)
+- [Table of Contents](#table-of-contents)
 - [1. ollama docker設定](#1-ollama-docker設定)
   - [1.1 docker実行](#11-docker実行)
   - [1.2 GPUバックグランド実行](#12-gpuバックグランド実行)
@@ -33,7 +35,7 @@ ollama関係のメモ
     - [1. おすすめの日本語対応モデル (24GB VRAM)](#1-おすすめの日本語対応モデル-24gb-vram)
     - [2. Geforce3060 x 2のModelfile例 (24GB VRAM)](#2-geforce3060-x-2のmodelfile例-24gb-vram)
   - [【NG】LLM-jp-4 32B-A3Bのインストール (うまく行かなかった)](#ngllm-jp-4-32b-a3bのインストール-うまく行かなかった)
-    - [概要](#概要)
+      - [概要](#概要)
     - [1. LLM-jp-4 32B-A3B の特徴](#1-llm-jp-4-32b-a3b-の特徴)
     - [2. Ollamaでの実行方法(日本語が文字化け)](#2-ollamaでの実行方法日本語が文字化け)
     - [2. Ollamaでの実行方法(別方法)](#2-ollamaでの実行方法別方法)
@@ -559,57 +561,4 @@ VSCodeでGitHub Copilotに近い体験をローカルモデルで実現するに
 - 1.インストール:
   - VSCodeの拡張機能マーケットプレイスから Continue をインストール
 
-- 2.設定の編集:
-  - Continueのサイドバーにある歯車アイコン（Open Config）をクリックし、config.json を開きます。
-
-- 3.モデル情報の追加:
-  - models 配列にOllamaの設定を追記
-  - path: C:\Users\$USER\.continue\config.yaml
-
-```yaml
-name: Local Assistant
-version: 1.0.0
-schema: v1
-models:
-  - name: Llama 3.2 3B
-    provider: ollama
-    model: llama3.2:3b
-    roles:
-      - chat
-      - edit
-    apiBase: http://192.168.1.7:11434
-
-  - name: Qwen3.5-Coder 9B
-    provider: ollama
-    model: qwen3.5:9b
-    roles:
-      - autocomplete
-    apiBase: http://192.168.1.7:11434
-
-  - name: llm-jp-4-32b-a3b-thinking-gguf
-    provider: ollama
-    model: hf.co/alfredplpl/llm-jp-4-32b-a3b-thinking-gguf:latest
-    roles:
-      - chat
-      - edit
-    apiBase: http://192.168.1.7:11434
-
-context:
-  - provider: code
-  - provider: docs
-  - provider: diff
-  - provider: terminal
-  - provider: problems
-  - provider: folder
-  - provider: codebase
-```
-
-- 4.使用開始:
-  - Continueのチャット画面で、追加したモデル（LLM-jp-4）を選択して利用
-
-- 5.参考
-  - 【Windows】VSCodeと拡張機能Continueでollamaにローカル接続
-    - https://www.kotememo.com/posts/vscode_ollama_continue
-  - Ollama + ContinueでVS CodeにローカルLLM開発環境を構築する (Windows / WSL両対応)
-    - https://qiita.com/usxc/items/72c9dd16a261fc502f90
-
+詳細は、[Continue.md](./Continue.md)に記載。  
