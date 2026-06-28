@@ -1,0 +1,186 @@
+name: Tag on merge to main
+
+# このワークフローは、develop から main への PR がマージされたタイミングで実行されます。
+# pyproject.toml の version を読み取り、その値を基に Git タグと GitHub Release を作成します。
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  tag_release:
+    # PR が実際にマージされ、かつマージ元ブランチが develop である場合のみ実行します。
+    if: github.event.pull_request.merged == true && github.event.pull_request.head.ref == 'develop'
+    runs-on: ubuntu-latest
+    permissions:
+      # Git タグ作成と GitHub Release 作成に必要な書き込み権限を付与します。
+      contents: write
+
+    steps:
+      # リポジトリ全体の履歴を取得して、タグ作成・push に対応できるようにします。
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Python を使って pyproject.toml からバージョン文字列を抽出します。
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # pyproject.toml の [project] セクション内の version を読み取り、後続ステップで利用できるようにします。
+      - name: Read version from pyproject.toml
+        id: version
+        run: |
+          python - <<'PY'
+          import re
+          from pathlib import Path
+
+          # pyproject.toml を UTF-8 で読み込みます。
+          text = Path('pyproject.toml').read_text(encoding='utf-8')
+
+          # version = "0.1.0" のような形式を正規表現で抽出します。
+          m = re.search(r'^version\s*=\s*"([^"]+)"', text, re.M)
+          if not m:
+              raise SystemExit('version not found in pyproject.toml')
+
+          version = m.group(1)
+          print(f"version={version}")
+
+          # GitHub Actions の出力変数に保存して、後続ステップから参照できるようにします。
+          with open(Path(env['GITHUB_OUTPUT']), 'a', encoding='utf-8') as fh:
+              fh.write(f"version={version}\n")
+          PY
+
+      # 既存タグがあればスキップし、なければ新しいタグを作成して push します。
+      - name: Create tag and release
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # pyproject.toml の version を基にタグ名を組み立てます。例: 0.1.0 -> v0.1.0
+          tag="v${{ steps.version.outputs.version }}"
+
+          # すでに同名タグが存在するか確認します。
+          if git rev-parse "$tag" >/dev/null 2>&1; then
+            echo "Tag $tag already exists"
+            # 後続の Release 作成ステップをスキップするためのフラグを設定します。
+            echo "tag_exists=true" >> "$GITHUB_ENV"
+          else
+            # 新規タグを作成し、リモートへ push します。
+            git tag "$tag"
+            git push origin "$tag"
+            echo "tag_exists=false" >> "$GITHUB_ENV"
+          fi
+
+      # PR のタイトル・説明・コメントを収集し、箇条書きの Release 本文として保存します。
+      # ここで取得した内容は後続の GitHub Release 作成ステップに渡されます。
+      - name: Generate release notes from PR details
+        id: release_notes
+        # すでに同名タグが存在している場合は、Release 作成を行わないため、このステップもスキップします。
+        if: env.tag_exists != 'true'
+        env:
+          # GitHub API から PR 情報を取得するために必要なトークンです。
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+          from pathlib import Path
+
+          # GitHub リポジトリ名を取得します。例: owner/repo
+          repo = os.environ['GITHUB_REPOSITORY']
+          # 現在の PR 番号を取得します。
+          pr_number = os.environ['PR_NUMBER']
+          # API 認証用のトークンを取得します。
+          token = os.environ['GITHUB_TOKEN']
+
+          # GitHub REST API へアクセスする際のヘッダーを設定します。
+          headers = {
+              'Authorization': f'Bearer {token}',
+              'Accept': 'application/vnd.github+json',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+
+          # API リクエストを実行し、JSON として返却する共通関数です。
+          def fetch_json(url: str):
+              req = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(req) as response:
+                  return json.load(response)
+
+          # PR 本体の情報を取得します。タイトル・本文・マージ担当者などを参照できます。
+          pr = fetch_json(f'https://api.github.com/repos/{repo}/pulls/{pr_number}')
+          # PR に付けられた Issue コメントを取得します。
+          issue_comments = fetch_json(f'https://api.github.com/repos/{repo}/issues/{pr_number}/comments')
+          # PR に付けられた Review コメントを取得します。
+          review_comments = fetch_json(f'https://api.github.com/repos/{repo}/pulls/{pr_number}/comments')
+
+          # Release 本文として出力する行を順番に組み立てます。
+          lines = [
+              '## Release notes',
+              '',
+              f'- PR: #{pr_number} {pr.get("title", "")}',
+              f"- Merged by: @{pr.get('merged_by', {}).get('login', 'unknown')}" if pr.get('merged_by') else '- Merged by: unknown',
+              '',
+              '### PR description',
+          ]
+
+          # PR の説明本文があれば、その内容を箇条書きとして追加します。
+          description = (pr.get('body') or '').strip()
+          if description:
+              for line in description.splitlines():
+                  lines.append(f'- {line}' if line else '-')
+          else:
+              lines.append('- No description provided.')
+
+          # コメント欄の見出しを追加します。
+          lines.extend(['', '### Comments'])
+
+          # Issue コメントと Review コメントをまとめて収集します。
+          collected_comments = []
+          for comment in issue_comments:
+              user = comment.get('user', {}).get('login', 'unknown')
+              body = ' '.join((comment.get('body') or '').splitlines()).strip()
+              if body:
+                  collected_comments.append(f'- @{user}: {body}')
+
+          for comment in review_comments:
+              user = comment.get('user', {}).get('login', 'unknown')
+              body = ' '.join((comment.get('body') or '').splitlines()).strip()
+              if body:
+                  collected_comments.append(f'- @{user} (review): {body}')
+
+          # 収集したコメントがあればそのまま追加し、なければフォールバックとしてメッセージを出します。
+          if collected_comments:
+              lines.extend(collected_comments)
+          else:
+              lines.append('- No comments found.')
+
+          # 生成した本文を一時ファイルとして保存します。
+          notes_path = Path('release_notes.md')
+          notes_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+          # 後続の Release 作成ステップで読み取れるように、ファイルパスを出力変数として設定します。
+          with open(Path(os.environ['GITHUB_OUTPUT']), 'a', encoding='utf-8') as fh:
+              fh.write(f'body_path={notes_path}\n')
+          PY
+        env:
+          # ワークフロー実行時に渡される PR 番号です。
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+
+      # 新しくタグを作成した場合のみ GitHub Release を作成します。
+      - name: Create GitHub Release
+        if: env.tag_exists != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          # 作成するタグ名を指定します。
+          tag_name: v${{ steps.version.outputs.version }}
+          # Release のタイトルを指定します。
+          name: Release v${{ steps.version.outputs.version }}
+          # Release 本文として、PR の説明とコメントを箇条書きで反映します。
+          body_path: ${{ steps.release_notes.outputs.body_path }}
+          draft: false
+          prerelease: false

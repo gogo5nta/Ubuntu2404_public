@@ -213,3 +213,8 @@ info/*.txt
 
 # _old folder
 _old/
+
+
+# .venv
+
+.venv/
