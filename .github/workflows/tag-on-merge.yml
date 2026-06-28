@@ -20,13 +20,15 @@ jobs:
     steps:
       # リポジトリ全体の履歴を取得して、タグ作成・push に対応できるようにします。
       - name: Checkout repository
-        uses: actions/checkout@v4
+        # Pin to the actions/checkout main commit known to use Node.js 24 for stability.
+        uses: actions/checkout@b9e0990d219a03df7633c93f6f005a8fecbcab22
         with:
           fetch-depth: 0
 
       # Python を使って pyproject.toml からバージョン文字列を抽出します。
       - name: Set up Python
-        uses: actions/setup-python@v5
+        # Pin to the actions/setup-python main commit known to use Node.js 24 for stability.
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.11'
 
@@ -36,6 +38,7 @@ jobs:
         run: |
           python - <<'PY'
           import re
+          import os
           from pathlib import Path
 
           # pyproject.toml を UTF-8 で読み込みます。
@@ -44,14 +47,18 @@ jobs:
           # version = "0.1.0" のような形式を正規表現で抽出します。
           m = re.search(r'^version\s*=\s*"([^"]+)"', text, re.M)
           if not m:
-              raise SystemExit('version not found in pyproject.toml')
+            raise SystemExit('version not found in pyproject.toml')
 
           version = m.group(1)
           print(f"version={version}")
 
           # GitHub Actions の出力変数に保存して、後続ステップから参照できるようにします。
-          with open(Path(env['GITHUB_OUTPUT']), 'a', encoding='utf-8') as fh:
-              fh.write(f"version={version}\n")
+          # 注意: env は未定義なので os.environ を使う
+          output_path = os.environ.get('GITHUB_OUTPUT')
+          if not output_path:
+            raise SystemExit('GITHUB_OUTPUT not set')
+          with open(Path(output_path), 'a', encoding='utf-8') as fh:
+            fh.write(f"version={version}\n")
           PY
 
       # 既存タグがあればスキップし、なければ新しいタグを作成して push します。

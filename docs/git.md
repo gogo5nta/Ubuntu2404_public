@@ -32,3 +32,10 @@ git config --global user.name "Your Name"
 # user.email setting
 git config --global user.email "your.email@example.com"
 ```
+
+## windowsでGithub.cliをインストール
+
+PowerShell(管理者でなくてOK)で以下を実行
+```shell
+winget install --id GitHub.cli -e
+```
