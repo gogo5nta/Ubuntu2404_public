@@ -181,13 +181,15 @@ jobs:
       # 新しくタグを作成した場合のみ GitHub Release を作成します。
       - name: Create GitHub Release
         if: env.tag_exists != 'true'
-        uses: softprops/action-gh-release@v2
+        # Use ncipollo/release-action which targets Node.js 24 (no Node.js 20 deprecation warning)
+        uses: ncipollo/release-action@v1
         with:
-          # 作成するタグ名を指定します。
-          tag_name: v${{ steps.version.outputs.version }}
+          # 作成するタグ名を指定します（ncipollo uses 'tag' as the input name）。
+          tag: v${{ steps.version.outputs.version }}
           # Release のタイトルを指定します。
           name: Release v${{ steps.version.outputs.version }}
           # Release 本文として、PR の説明とコメントを箇条書きで反映します。
-          body_path: ${{ steps.release_notes.outputs.body_path }}
+          # ncipollo に渡す場合は 'bodyFile' を使います。
+          bodyFile: ${{ steps.release_notes.outputs.body_path }}
           draft: false
           prerelease: false
