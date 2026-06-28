@@ -84,6 +84,8 @@ jobs:
         env:
           # GitHub API から PR 情報を取得するために必要なトークンです。
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # ワークフロー実行時に渡される PR 番号です（後続の Python スクリプトが参照します）。
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           python - <<'PY'
           import json
@@ -167,9 +169,7 @@ jobs:
           with open(Path(os.environ['GITHUB_OUTPUT']), 'a', encoding='utf-8') as fh:
               fh.write(f'body_path={notes_path}\n')
           PY
-        env:
-          # ワークフロー実行時に渡される PR 番号です。
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+        
 
       # 新しくタグを作成した場合のみ GitHub Release を作成します。
       - name: Create GitHub Release
